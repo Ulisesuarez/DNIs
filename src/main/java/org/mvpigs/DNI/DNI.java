@@ -48,7 +48,7 @@ if(this.identificacion.length()==NUMERO_CARACTERES_DNI){
 	}
 
 	public String getIdentificacion() {
-		// TODO Auto-generated method stub
+
 		return this.identificacion;
 	}
 	

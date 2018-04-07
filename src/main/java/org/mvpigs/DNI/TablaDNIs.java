@@ -10,11 +10,18 @@ public class TablaDNIs {
 	}
 
 	public static char crearLetra(String numero) {
+
 		int numeroInt=Integer.valueOf(numero);
 		
 		int indiceTabla = numeroInt % (Tabla.length);
 		return Tabla[indiceTabla];
 		
 	}
+	public static char crearLetra(Integer numero) {
 
+
+		int indiceTabla = numero % (Tabla.length);
+		return Tabla[indiceTabla];
+
+	}
 }

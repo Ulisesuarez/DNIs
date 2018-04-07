@@ -1,27 +1,34 @@
-package org.mvpigs.DNI;
+package org.mvpigs.DNIregex;
 
+
+import org.mvpigs.DNI.TablaDNIs;
 
 import java.io.IOException;
 
 public class DniCif {
 
+    private  String NIForignial;
+    private Character letraControl = null;
     private String dni = null;
     private Boolean numeroSano = false;
     private Boolean letraSana = false;
     private Boolean dniCifSano = false;
     // Composición (agregación) "Has - a" / "Tiene - un"
-    private TablaDNIs tabla = new TablaDNIs();
+    private char[] tabla = TablaDNIs.getTabla();
 
     /* Constructores */
 
     public DniCif(String dni) {
-        this.dni = dni;
+        this.NIForignial =dni;
+        this.dni = ConvertNIE(dni);
+
     }
 
     /* Encapsulacion */
 
     public void setDni(String cadena) {
-        this.dni = cadena;
+        this.NIForignial = cadena;
+        this.dni = ConvertNIE(cadena);
     }
 
     public String getDni() {
@@ -76,14 +83,18 @@ public class DniCif {
         }
     }
 
-    public Character obtenerLetra() throws IOException {// calcularLetra no puede ejecutarse si antes no se cumplen las condiciones previas en checkDni
+    public void obtenerLetra() throws IOException {// calcularLetra no puede ejecutarse si antes no se cumplen las condiciones previas en checkDni
         // y checkletra
-        if (getNumeroSano()) {
-            return this.tabla.crearLetra(getParteNumericaDni());
-        } else // EXCEPCION: aun no sabemos implementarlas - este código no es admisible
-            throw new IOException("Parte numérica del DNI no está sana");
+        try {
+            if ( getNumeroSano() ){
+            this.letraControl = TablaDNIs.crearLetra(getParteNumericaDni()); }
+            else {
+                throw new IOException();
+            }
+        } catch (IOException exc) {
+            System.out.println("Parte numérica del DNI no está sana");
+        }
     }
-
 
     public Boolean checkLongitud() {
         return getDni().length() == 9;
@@ -107,12 +118,20 @@ public class DniCif {
     }
 
     public Boolean checkLetraValida() {
-        try {
-            return getParteAlfabeticaDni() == obtenerLetra();
-        } catch (IOException ioexcepcion) {
+        try{
+            obtenerLetra();
+            return getParteAlfabeticaDni() == this.letraControl;
+        } catch(IOException exc){
             return false;
         }
 
     }
+    public String ConvertNIE(String NIF){
+        String parteInicial=NIF.substring(0,NIF.length()-1);
+        String parteFinal =NIF.substring(NIF.length()-1);
+        parteInicial = parteInicial.replace("X", "0").replace("Y", "1").replace("Z", "2");
+
+    return parteInicial+parteFinal;}
+
 
 }
